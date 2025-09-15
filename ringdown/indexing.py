@@ -55,7 +55,10 @@ class ModeIndex(ABC):
                 return GenericIndex(int(mode[0]))
             except (ValueError, TypeError):
                 pass
-        return HarmonicIndex.construct(*mode)
+        if len(mode) == 6:
+            return QuadraticIndex.construct(*mode)
+        else:
+            return HarmonicIndex.construct(*mode)
 
 
 @dataclass
@@ -249,6 +252,72 @@ class HarmonicIndex(ModeIndex):
         from . import qnms
 
         return qnms.KerrMode(self)
+
+
+@dataclass
+class QuadraticIndex(ModeIndex):
+    """A quadratic quasinormal mode index (l1, m1, n1, l2, m2, n2), where l and m are
+    the angular (spheroidal-harmonic) indices, and n is the overtone number.
+    Different indexs (1, 2) indicate the parent modes of this quadratic mode.
+    """
+
+    l1: int
+    m1: int
+    n1: int
+    l2: int
+    m2: int
+    n2: int
+
+    _keys = ("l1", "m1", "n1", "l2", "m2", "n2")
+
+    def __iter__(self):
+        # Yield each item one by one, making this class iterable
+        for k in self._keys:
+            yield getattr(self, k)
+
+    def __getitem__(self, i) -> int:
+        if isinstance(i, int):
+            return getattr(self, self._keys[i])
+        else:
+            return getattr(self, i)
+
+    def __eq__(self, other):
+        if isinstance(other, QuadraticIndex):
+            return all(
+                [
+                    getattr(self, k) == getattr(other, k)
+                    for k in self._keys
+                ]
+            )
+        else:
+            return False
+
+    def get_label(self, **kws):
+        """Get a string label for the mode index."""
+        s = f"{self.l1}{self.m1}{self.n1}*{self.l2}{self.m2}{self.n2}"
+        return s
+
+    def to_bytestring(self):
+        """Convert the mode index to a bytestring."""
+        s = f"({self.l1},{self.m1},{self.n1}),({self.l2},{self.m2},{self.n2})"
+        return bytes(s, "utf-8")
+
+    def get_coordinate(self):
+        """Get coordinate to use in InferenceData indexing."""
+        return self.to_bytestring()
+
+    @property
+    def is_prograde(self):
+        return True
+
+    @classmethod
+    def construct(cls, *s):
+        """Construct a black hole mode index from a tuple.
+        Can be called as:
+
+        construct(l1, m1, n1, l2, m2, n2)
+        """
+        return cls(*s)
 
 
 class ModeIndexList(object):

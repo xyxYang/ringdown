@@ -95,3 +95,6 @@ def test_mode_index_list(indices):
     assert len(mil.indices) == len(indices)
     assert all(isinstance(m, ringdown.indexing.ModeIndex)
                for m in mil.indices)
+
+if __name__ == "__main__":
+    pytest.main()
