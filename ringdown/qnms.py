@@ -1,4 +1,4 @@
-__all__ = ["KerrMode", "get_ftau"]
+__all__ = ["KerrMode", "QuadraticMode", "get_ftau"]
 
 from abc import ABC, abstractmethod
 import numpy as np

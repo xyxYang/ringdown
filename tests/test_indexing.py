@@ -48,7 +48,7 @@ def _test_harmonic(mode, ref_index):
     assert mode.l == ref_index[2]
     assert mode.m == ref_index[3]
     assert mode.n == ref_index[4]
-    assert isinstance(mode.get_kerr_mode(), ringdown.qnms.KerrMode)
+    assert isinstance(mode.get_mode(), ringdown.qnms.KerrMode)
     _test_index_base(mode)
 
 

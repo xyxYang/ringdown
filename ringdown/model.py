@@ -11,7 +11,7 @@ import jax.scipy as jsp
 import numpyro
 import numpyro.distributions as dist
 from . import qnms
-from .indexing import ModeIndexList
+from .indexing import ModeIndexList, ModeIndex
 from .result import Result
 from .utils.swsh import construct_sYlm, calc_YpYc
 
@@ -627,7 +627,7 @@ def make_model(
             fcoeffs = []
             gcoeffs = []
             for mode in modes:
-                c = qnms.KerrMode(mode).coefficients
+                c = ModeIndex.construct(mode).get_mode().coefficients
                 fcoeffs.append(c[0])
                 gcoeffs.append(c[1])
             fcoeffs = jnp.array(fcoeffs)

@@ -55,7 +55,7 @@ class ModeIndex(ABC):
                 return GenericIndex(int(mode[0]))
             except (ValueError, TypeError):
                 pass
-        if len(mode) == 6:
+        if len(*mode) == 6:
             return QuadraticIndex.construct(*mode)
         else:
             return HarmonicIndex.construct(*mode)
@@ -247,7 +247,7 @@ class HarmonicIndex(ModeIndex):
             s = f"-{s}"
         return s
 
-    def get_kerr_mode(self, **kws):
+    def get_mode(self, **kws):
         """Get a KerrMode object for this mode index."""
         from . import qnms
 
@@ -317,7 +317,17 @@ class QuadraticIndex(ModeIndex):
 
         construct(l1, m1, n1, l2, m2, n2)
         """
-        return cls(*s)
+        if len(s) == 1:
+            l1, m1, n1, l2, m2, n2 = s[0]
+        else:
+            l1, m1, n1, l2, m2, n2 = s
+        return cls(l1, m1, n1, l2, m2, n2)
+
+    def get_mode(self, **kws):
+        """Get a QuadraticMode object for this mode index."""
+        from . import qnms
+
+        return qnms.QuadraticMode(self)
 
 
 class ModeIndexList(object):
